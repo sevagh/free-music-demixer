@@ -1,16 +1,10 @@
 # free-music-demixer
 
-This repository contains an older snapshot of the code once used for [freemusicdemixer.com](https://freemusicdemixer.com).  
+An archived snapshot of an early demo of client-side music demixing (music source separation) in the browser, using the Demucs v4 hybrid transformer model compiled to WebAssembly. It is provided as-is and is no longer maintained.
 
 While the WASM modules and JavaScript in this repo are licensed under MIT, the AI model weights and other website assets are proprietary and not covered by the MIT license.
 
-For the latest features, updates, and higher-quality custom ensemble models, visit the [website](https://freemusicdemixer.com). This repo may no longer match the live site and is provided as-is.
-
-<img alt="freemusicdemixer-logo" src="./.github/logo.png" width="20%"/> <a href="https://pro.freemusicdemixer.com" target="_blank"><img alt="freemusicdemixer-logo" src="./.github/logo_pro.png" width="21.5%"/></a>
-
 ---
-
-An example of a free static website for client-side music demixing (aka music source separation) with the Demucs v4 hybrid transformer AI model.
 
 [demucs.cpp](https://github.com/sevagh/demucs.cpp): transliterated the original PyTorch model Python code to C++ with Eigen3, compiled to WebAssembly with Emscripten. No quantization: the weights of Demucs v4 `htdemucs` and `htdemucs_6s` are 81 MB and 53 MB respectively, stored as float16. Anything smaller affects the quality of the network, and compression only gets down to ~70 MB: not worth the extra loading time.
 
