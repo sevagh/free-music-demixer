@@ -4,6 +4,8 @@ An archived snapshot of an early demo of client-side music demixing (music sourc
 
 While the WASM modules and JavaScript in this repo are licensed under MIT, the AI model weights and other website assets are proprietary and not covered by the MIT license.
 
+Model weights are not included. The demo loads ONNX Runtime model files (for example `htdemucs.ort.gz`) from a local `web/models/` folder, which you provide yourself.
+
 ---
 
 [demucs.cpp](https://github.com/sevagh/demucs.cpp): transliterated the original PyTorch model Python code to C++ with Eigen3, compiled to WebAssembly with Emscripten. No quantization: the weights of Demucs v4 `htdemucs` and `htdemucs_6s` are 81 MB and 53 MB respectively, stored as float16. Anything smaller affects the quality of the network, and compression only gets down to ~70 MB: not worth the extra loading time.

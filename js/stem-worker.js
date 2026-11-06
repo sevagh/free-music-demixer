@@ -131,8 +131,7 @@ onmessage = async function(e) {
         } else if (modelName === 'demucs-pro-cust') {
             // medium quality = budget of 4 inferences
 
-            // here we implement the logic of demucs-pro-cust, from:
-            // https://github.com/sevagh/demucs.cpp-pro/blob/main/src_wasm/demucs_pro.cpp
+            // ensemble logic for demucs-pro-cust
             let loadedModule = await loadWASMModule();
             if (!loadedModule) {
                 console.error("Error loading WASM module");

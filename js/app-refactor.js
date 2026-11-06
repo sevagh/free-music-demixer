@@ -105,7 +105,7 @@ export function processSegments(workers, leftChannel, rightChannel, numSegments,
     });
 }
 
-export function fetchAndCacheFiles(model, components, onProgress = null, dlPrefix = "https://bucket.freemusicdemixer.com") {
+export function fetchAndCacheFiles(model, components, onProgress = null, dlPrefix = "models") {
     let modelFiles = [];
     if (model === 'demucs-free-4s') {
         modelFiles.push('htdemucs.ort.gz');

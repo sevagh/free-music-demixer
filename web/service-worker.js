@@ -1,1 +1,65 @@
-let CACHE_NAME="PRO_v20241110",RESOURCES_TO_PRELOAD=["https://bucket.freemusicdemixer.com/htdemucs.ort.gz","https://bucket.freemusicdemixer.com/htdemucs_6s.ort.gz","https://bucket.freemusicdemixer.com/htdemucs_ft_drums.ort.gz","https://bucket.freemusicdemixer.com/htdemucs_ft_bass.ort.gz","https://bucket.freemusicdemixer.com/htdemucs_ft_other.ort.gz","https://bucket.freemusicdemixer.com/htdemucs_ft_vocals.ort.gz","https://bucket.freemusicdemixer.com/htdemucs_2s_cust.ort.gz"],addResourcesToCache=async e=>{await(await caches.open(CACHE_NAME)).addAll(e)};self.addEventListener("install",e=>{e.waitUntil(addResourcesToCache(RESOURCES_TO_PRELOAD)),self.skipWaiting()}),self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(e=>Promise.all(e.map(e=>{if(e!==CACHE_NAME)return caches.delete(e)})))),e.waitUntil(self.clients.claim())}),self.addEventListener("fetch",s=>{s.request.url.startsWith("https://bucket.freemusicdemixer.com/")&&s.request.url.endsWith(".ort.gz")?s.respondWith(caches.open(CACHE_NAME).then(t=>t.match(s.request).then(e=>e||fetch(s.request).then(e=>(t.put(s.request,e.clone()),e))))):s.respondWith(fetch(s.request))});
+const CACHE_NAME = "PRO_v20241110";
+
+const RESOURCES_TO_PRELOAD = [
+  "models/htdemucs.ort.gz",
+  "models/htdemucs_6s.ort.gz",
+  "models/htdemucs_ft_drums.ort.gz",
+  "models/htdemucs_ft_bass.ort.gz",
+  "models/htdemucs_ft_other.ort.gz",
+  "models/htdemucs_ft_vocals.ort.gz",
+  "models/htdemucs_2s_cust.ort.gz",
+];
+
+// Pre-cache resources
+const addResourcesToCache = async (resources) => {
+  const cache = await caches.open(CACHE_NAME);
+  await cache.addAll(resources);
+};
+
+// The install event fires when the Service Worker is initially registered
+self.addEventListener("install", (event) => {
+  event.waitUntil(addResourcesToCache(RESOURCES_TO_PRELOAD));
+  // Force the waiting Service Worker to become the active Service Worker
+  self.skipWaiting();
+});
+
+// The activate event is fired when the Service Worker starts up
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+  event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener("fetch", (event) => {
+  // Check if the request is for a .bin file from the external resource
+  if (event.request.url.startsWith("models/") &&
+      event.request.url.endsWith('.ort.gz')) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then(cache => {
+        return cache.match(event.request).then(response => {
+          if (response) {
+            // Return the cached response if found
+            return response;
+          }
+          // Otherwise fetch from the network, cache the response, and return it
+          return fetch(event.request).then(networkResponse => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          });
+        });
+      })
+    );
+  } else {
+    // For non-.bin files or requests not to the specific domain, just fetch from the network
+    event.respondWith(fetch(event.request));
+  }
+});

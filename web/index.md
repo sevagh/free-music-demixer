@@ -1,46 +1,8 @@
 ---
-header_class: index
-#title: "Music Demixer: Powered by AI"
+title: Music demixing demo
 ---
 <script src="app.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.0/umd/index.js"></script>
-
-<section class="info-section">
-  <h3>
-  Customers prefer our award-winning quality. Ditch the expensive competitors and <a href="/pricing">join us today!</a>
-  </h3>
-</section>
-
-<!-- Anchor for scrolling, if needed -->
-<a id="demixer-app" class="hidden-anchor"></a>
-
-<!-- Mobile-Only Warning Banner/Card -->
-<section class="info-section" id="mobile-warning-container">
-  <h3>Better on Computer 💻</h3>
-  <p>Smaller devices might crash. Get a reminder:</p>
-  <div class="mobile-warning-actions">
-    <button id="email-reminder-btn" class="highlight-btn">Email link</button>
-  </div>
-  <p style="margin-top: 0.5rem;">
-    … or try it anyway!
-  </p>
-</section>
-
-<!-- Hidden Modal for Email Collection -->
-<div id="email-modal" class="modal">
-  <div class="modal-content">
-    <h3>Enter your email address</h3>
-    <p>We’ll send you a reminder to visit us on a desktop!</p>
-    <input
-      type="email"
-      id="email-input"
-      placeholder="you@example.com"
-      class="email-input"
-    />
-    <button id="email-send-btn" class="highlight-btn">Send</button>
-    <button id="email-cancel-btn" class="cancel-btn">Cancel</button>
-  </div>
-</div>
 
 <!-- Wizard sections here... -->
 <div class="wizard-container">
@@ -85,7 +47,6 @@ header_class: index
         </form>
       <b><a href="javascript:void(0);" id="midiTooltipToggle" style="text-decoration: none; cursor: pointer;">ℹ️</a></b>
       <div id="midiTooltip" style="display: none;">
-        <a href="/getting-started/2024/12/07/Music-transcription-feature">Learn more about our MIDI and MusicXML music transcription features</a>
       </div>
       </div>
       <div class="column">
@@ -138,11 +99,11 @@ header_class: index
             </div>
             <div>
               <input type="radio" id="medium-quality" name="quality" value="medium" disabled>
-              <label for="medium-quality">Medium 🔒</label>
+              <label for="medium-quality">Medium (unavailable)</label>
             </div>
             <div>
               <input type="radio" id="high-quality" name="quality" value="high" disabled>
-              <label for="high-quality">High 🔒</label>
+              <label for="high-quality">High (unavailable)</label>
             </div>
           </form>
       <b><a href="javascript:void(0);" id="qualityTooltipToggle" style="text-decoration: none; cursor: pointer;">ℹ️</a></b>
@@ -185,12 +146,8 @@ header_class: index
           </div>
           </form>
           <br>
-          ℹ️ Read our <a href="/faqs" target="_blank" rel="noopener noreferrer">FAQs</a> to explain these settings
       </div>
       </div>
-    </div>
-    <div class="cta-legend">
-      <p id="pro-cta">🔒 <a href="/pricing#subscribe-today" target="_blank" rel="noopener noreferrer">Click here to unlock higher qualities!</a></p>
     </div>
     <div class="wizard-message">
       <p id="runjob-error" class="error-message" style="display:none"></p>
@@ -212,7 +169,7 @@ header_class: index
       <div class="progress-bar" id="midi-progress-bar-outer">
           <div class="progress-bar-inner" id="midi-progress-bar" style="width: 0%"></div>
       </div>
-      <b>Slow?</b> Start a new job and set Advanced -> Max memory higher. Read <a href="/getting-started/2024/09/20/How-to-pick-max-memory" target="_blank" alt="memory-guide" rel="noopener noreferrer">our guide for info</a> 💻
+      <b>Slow?</b> Start a new job and set Advanced -> Max memory higher.
     </div>
     <div class="output-container">
       <div class="output-text" id="output-progress-text">Outputs...</div>
@@ -223,7 +180,7 @@ header_class: index
     <div class="wizard-footer">
       <button id="prev-step-3" class="wizard-prev-btn" disabled>Back</button>
       <button id="next-step-3-sheet-music" class="wizard-next-btn highlight-btn" disabled>
-        View and print sheet music (New! 🌟)
+        View and print sheet music
       </button>
       <button id="next-step-3-new-job" class="wizard-next-btn" disabled>New job</button>
     </div>
@@ -242,65 +199,3 @@ header_class: index
   </div>
   </div>
 </div>
-
-<!-- 4. Original Info/CTA Prompt -->
-<section class="info-section">
-  <h3>
-    Unlock <b>AI stem separation</b> and
-    <b>automatic music transcription</b> in your browser.
-    Effortlessly isolate vocals, drums, bass, melody, guitar, and piano.
-    Generate precise MIDI files, scores, and sheet music.
-    Perfect for musicians, DJs, producers, and creators.
-  </h3>
-</section>
-
-<!-- 5. Stem Separation Description & Diagram -->
-<section class="info-section">
-  <h3>
-    Experience advanced stem separation powered by the
-    <b>Demucs AI model</b> and award-winning technologies
-    from the Sony Music Demixing Challenges.
-  </h3>
-</section>
-
-<section class="image-section">
-  <img
-    id="music-demix-img"
-    class="title-img"
-    src="/assets/images/music-demix.webp"
-    alt="music-demixing-diagram"
-  />
-</section>
-
-<!-- 6. MIDI & Sheet Music Description & Diagram -->
-<section class="info-section">
-  <h3>
-    Save time with our powerful <b>automatic music transcription</b>,
-    <b>MIDI generation</b>, and <b>sheet music</b> features.
-    Use your instrument instead of a MIDI controller and quickly transcribe music!
-  </h3>
-</section>
-
-<section class="image-section">
-  <img
-    id="amt-img"
-    class="title-img"
-    src="/assets/images/midi-amt.webp"
-    alt="midi-amt-diagram"
-  />
-</section>
-
-<!-- 7. Final Privacy & Offline Blurb -->
-<section class="info-section">
-  <h3>
-    Enjoy <b>100% privacy in your browser</b> — no cloud.
-    Join our customers who switched from expensive competitors
-    to our superior, simple solution. <a href="/#demixer-app">Get started today!</a>
-  </h3>
-</section>
-
-<section class="featured-section">
-<div class="featured-badges">
-<a href="https://theresanaiforthat.com/ai/free-music-demixer/?ref=featured&v=691965" target="_blank"><img height="40" src="https://media.theresanaiforthat.com/featured5.png" alt="theresanaiforthat-promo"></a>
-</div>
-</section>

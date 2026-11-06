@@ -1,1 +1,89 @@
-let wasmModule,loadedModule;function loadWASMModule(e){importScripts(e+"?v="+(new Date).getTime()),(wasmModule=libbasicpitch()).then(e=>{postMessage({msg:"WASM_READY"}),loadedModule=e})}onmessage=function(e){var d,l,o,a,t,u,M,r,n,s,i;"LOAD_WASM"===e.data.msg?loadWASMModule(e.data.scriptName):"PROCESS_AUDIO"===e.data.msg&&(l=new Float32Array(e.data.inputData),u=e.data.length,s=e.data.batchMode,console.log("Running MIDI inference..."),d=loadedModule._malloc(l.length*l.BYTES_PER_ELEMENT),new Float32Array(loadedModule.HEAPF32.buffer,d,l.length).set(l),l=loadedModule._malloc(4),o=loadedModule._malloc(4),a=loadedModule._malloc(4),t=loadedModule._malloc(4),loadedModule._convertToMidi(d,u,l,o,a,t,s),u=loadedModule.getValue(l,"i32"),s=loadedModule.getValue(o,"i32"),M=loadedModule.getValue(a,"i32"),r=loadedModule.getValue(t,"i32"),0===u&&0===M?(console.error("Failed to generate MIDI and musicxml data."),console.log("midiSize:",s),console.log("mxmlSize:",r),postMessage({msg:"PROCESSING_FAILED"})):(i=new Uint8Array(loadedModule.HEAPU8.buffer,u,s),n=new Uint8Array(loadedModule.HEAPU8.buffer,M,r),(s=new Uint8Array(s)).set(i),(i=new Uint8Array(r)).set(n),postMessage({msg:"PROCESSING_DONE",midiBytes:s.buffer,mxmlBytes:i.buffer,stemName:e.data.stemName},[s.buffer,i.buffer]),loadedModule._free(u),loadedModule._free(M),loadedModule._free(d),loadedModule._free(l),loadedModule._free(o),loadedModule._free(a),loadedModule._free(t)))};
+let wasmModule;
+let loadedModule;
+
+onmessage = function(e) {
+    if (e.data.msg === 'LOAD_WASM') {
+        loadWASMModule(e.data.scriptName);
+    } else if (e.data.msg === 'PROCESS_AUDIO') {
+        const inputData = new Float32Array(e.data.inputData); // Convert back from ArrayBuffer
+        const length = e.data.length;  // Use the correct length
+
+        const batchMode = e.data.batchMode;
+
+        console.log('Running MIDI inference...');
+
+        // Allocate memory in WASM and copy input data into the WASM memory
+        const audioPointer = loadedModule._malloc(inputData.length * inputData.BYTES_PER_ELEMENT);
+        const wasmInputArray = new Float32Array(loadedModule.HEAPF32.buffer, audioPointer, inputData.length);
+        wasmInputArray.set(inputData);
+
+        // Allocate memory for MIDI data pointer and size
+        const midiDataPointer = loadedModule._malloc(4);  // Allocate 4 bytes for the pointer (uint8_t*)
+        const midiSizePointer = loadedModule._malloc(4);  // Allocate 4 bytes for the size (int)
+
+        const mxmlDataPointer = loadedModule._malloc(4);  // Allocate 4 bytes for the pointer (uint8_t*)
+        const mxmlSizePointer = loadedModule._malloc(4);  // Allocate 4 bytes for the size (int)
+
+        // Call the WASM function with the audio buffer, length, and pointers for the MIDI data and size
+        // TODO: choose a better stem name
+        loadedModule._convertToMidi(audioPointer, length, midiDataPointer, midiSizePointer, mxmlDataPointer, mxmlSizePointer, batchMode);
+
+        // Retrieve the MIDI data pointer and size from WASM memory
+        const midiData = loadedModule.getValue(midiDataPointer, 'i32');  // Get the pointer to MIDI data
+        const midiSize = loadedModule.getValue(midiSizePointer, 'i32'); // Get the size of the MIDI data
+
+        const mxmlData = loadedModule.getValue(mxmlDataPointer, 'i32');  // Get the pointer to MIDI data
+        const mxmlSize = loadedModule.getValue(mxmlSizePointer, 'i32'); // Get the size of the MIDI data
+
+        if (midiData === 0 && mxmlData === 0) {
+            console.error('Failed to generate MIDI and musicxml data.');
+            console.log('midiSize:', midiSize);
+            console.log('mxmlSize:', mxmlSize);
+            postMessage({ msg: 'PROCESSING_FAILED' });
+            return;
+        }
+
+        // If valid MIDI data was returned
+        // Access the MIDI data from WASM memory
+        const midiBytes = new Uint8Array(loadedModule.HEAPU8.buffer, midiData, midiSize);
+        const mxmlBytes = new Uint8Array(loadedModule.HEAPU8.buffer, mxmlData, mxmlSize);
+
+        // Create a new ArrayBuffer and copy the MIDI data into it
+        const transferableMidiBytes = new Uint8Array(midiSize);
+        transferableMidiBytes.set(midiBytes);
+
+        const transferableMxmlBytes = new Uint8Array(mxmlSize);
+        transferableMxmlBytes.set(mxmlBytes);
+
+        // Send the copied MIDI data back to the main thread with transferList
+        postMessage({
+            msg: 'PROCESSING_DONE',
+            midiBytes: transferableMidiBytes.buffer, // Only pass the ArrayBuffer
+            mxmlBytes: transferableMxmlBytes.buffer,
+            stemName: e.data.stemName
+        }, [transferableMidiBytes.buffer, transferableMxmlBytes.buffer]); // Transfer the buffer ownership
+
+        // Free the memory allocated for the MIDI data in WASM
+        loadedModule._free(midiData);
+        loadedModule._free(mxmlData);
+
+        // Free the memory allocated in WASM for the input audio and the MIDI pointer/size
+        loadedModule._free(audioPointer);
+        loadedModule._free(midiDataPointer);
+        loadedModule._free(midiSizePointer);
+        loadedModule._free(mxmlDataPointer);
+        loadedModule._free(mxmlSizePointer);
+    }
+};
+
+function loadWASMModule(scriptName) {
+    importScripts(`${scriptName}?v=${new Date().getTime()}`);  // Load the WASM glue code w/ cache busting
+
+    // Initialize the WASM module (which should set `Module`)
+    wasmModule = libbasicpitch(); // Module is created in the glue code
+
+    wasmModule.then((loaded_module) => {
+        postMessage({ msg: 'WASM_READY' });
+        loadedModule = loaded_module;
+    });
+}

@@ -1,13 +1,13 @@
 const CACHE_NAME = "PRO_v20241110";
 
 const RESOURCES_TO_PRELOAD = [
-  "https://bucket.freemusicdemixer.com/htdemucs.ort.gz",
-  "https://bucket.freemusicdemixer.com/htdemucs_6s.ort.gz",
-  "https://bucket.freemusicdemixer.com/htdemucs_ft_drums.ort.gz",
-  "https://bucket.freemusicdemixer.com/htdemucs_ft_bass.ort.gz",
-  "https://bucket.freemusicdemixer.com/htdemucs_ft_other.ort.gz",
-  "https://bucket.freemusicdemixer.com/htdemucs_ft_vocals.ort.gz",
-  "https://bucket.freemusicdemixer.com/htdemucs_2s_cust.ort.gz",
+  "models/htdemucs.ort.gz",
+  "models/htdemucs_6s.ort.gz",
+  "models/htdemucs_ft_drums.ort.gz",
+  "models/htdemucs_ft_bass.ort.gz",
+  "models/htdemucs_ft_other.ort.gz",
+  "models/htdemucs_ft_vocals.ort.gz",
+  "models/htdemucs_2s_cust.ort.gz",
 ];
 
 // Pre-cache resources
@@ -41,7 +41,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   // Check if the request is for a .bin file from the external resource
-  if (event.request.url.startsWith("https://bucket.freemusicdemixer.com/") &&
+  if (event.request.url.startsWith("models/") &&
       event.request.url.endsWith('.ort.gz')) {
     event.respondWith(
       caches.open(CACHE_NAME).then(cache => {

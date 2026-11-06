@@ -1,11 +1,7 @@
 {
   "devDependencies": {
     "gulp": "^5.0.0",
-    "gulp-uglify": "^3.0.2",
-    "wrangler": "^3.90.0"
-  },
-  "dependencies": {
-    "stripe": "^17.4.0"
+    "gulp-uglify": "^3.0.2"
   },
   "scripts": {
     "dev": "gulp"

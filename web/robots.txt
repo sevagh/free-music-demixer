@@ -1,4 +1,0 @@
----
-layout: none
----
-{% include robots.txt %}

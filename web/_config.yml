@@ -1,49 +1,4 @@
-plugins:
-  - jekyll-sitemap
-  - jekyll-feed
-  - jekyll-seo-tag
-
-favicon: assets/favicon.ico
-
-  #title: "music demixer"
-
-# dont mess with SEO here
-description: "Do it all with our cutting-edge AI tool: separate songs, split stems, instrumental breakdowns, vocal remover, isolate vocals, extract instruments, create karaoke tracks, transcribe music, create MIDI files, generate sheet music, and more."
-keywords:
-  - vocal remover
-  - extract vocals
-  - isolate vocals
-  - separate music
-  - instrumental breakdown
-  - karaoke songs
-  - music demixing
-  - stem separation
-  - AI music tool
-  - free music demixer
-  - Demucs
-  - Transformer AI
-  - browser-based music tool
-  - private music separation
-  - unlimited music splitting
-  - automatic music transcription
-  - MIDI file generation
-  - MIDI to sheet music
-  - sheet music
-  - score generation
-
-url: "https://freemusicdemixer.com"
-
-author: "sevagh"
-
-logo: "/assets/images/logo.webp"
-
-social:
-  name: Sevag H
-  links:
-    - https://github.com/sevagh
-
-google_analytics: 'G-B0BF5H94FM'
-future: false
+title: "Music demixing demo"
 
 sass:
   style: compressed
@@ -53,8 +8,3 @@ defaults:
       path: ""
     values:
       layout: default
-
-  - scope:
-      path: "_posts"
-    values:
-      layout: post

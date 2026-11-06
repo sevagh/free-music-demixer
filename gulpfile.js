@@ -31,21 +31,5 @@ gulp.task('jekyll-serve', function(cb) {
   });
 });
 
-// Task to run Wrangler dev
-gulp.task('wrangler-dev', function(cb) {
-  const wrangler = spawn('npx', ['wrangler', 'pages', 'dev'], {
-    cwd: path.join(__dirname, 'web'),
-    stdio: 'inherit',
-    shell: true
-  });
-
-  wrangler.on('close', function(code) {
-    if (code !== 0) {
-      console.error(`Wrangler process exited with code ${code}`);
-    }
-    cb(code);
-  });
-});
-
 // Default task to run all tasks in parallel
-gulp.task('default', gulp.parallel('watch-js', 'jekyll-serve', 'wrangler-dev'));
+gulp.task('default', gulp.parallel('watch-js', 'jekyll-serve'));

@@ -178,68 +178,6 @@ if (mediaQuery.matches) {
     handleMediaQueryChange(mediaQuery);
 }
 
-// Grab references to the elements
-const emailMeLinkButton = document.getElementById('email-reminder-btn');
-const emailModal = document.getElementById('email-modal');
-const emailInput = document.getElementById('email-input');
-const emailSendBtn = document.getElementById('email-send-btn');
-const emailCancelBtn = document.getElementById('email-cancel-btn');
-
-emailMeLinkButton.addEventListener('click', function() {
-  // Show the modal
-  emailModal.classList.add('show');
-
-  // instrumentation:
-  trackProductEvent('mobile-email-modal-opened', {
-    reason: 'user clicked email reminder button'
-  });
-});
-
-// Cancel button hides the modal
-emailCancelBtn.addEventListener('click', function() {
-  emailModal.classList.remove('show');
-});
-
-// click outside of modal to close
-window.addEventListener('click', (e) => {
-    if (e.target === emailModal) {
-      emailModal.classList.remove('show');
-    }
-});
-
-// When the user clicks "Send"
-emailSendBtn.addEventListener('click', async function() {
-  const email = emailInput.value.trim();
-  if (!email) {
-    alert('Please enter a valid email address.');
-    return;
-  }
-
-  // instrumentation - user attempts to send
-  trackProductEvent('mobile-email-send-attempt', {
-    typedEmail: email
-  });
-
-  try {
-    // Example: We do a GET request with the email in query param
-    // Adjust the path if your function is at /functions/sendmobileemail or something else
-    const baseUrl = window.location.origin;  // e.g. "https://freemusicdemixer.com"
-    const sendUrl = `${baseUrl}/sendmobileemail?email=${encodeURIComponent(email)}`;
-
-    const resp = await fetch(sendUrl);
-    if (!resp.ok) {
-      // Handle error
-      alert('Failed to send email. Please try again or contact support.');
-    } else {
-      alert('Success! Email sent. Check your inbox shortly.');
-      emailModal.classList.remove('show');
-    }
-  } catch (err) {
-    console.error('Error calling sendmobileemail:', err);
-    alert('Something went wrong sending the email.');
-  }
-});
-
 document.addEventListener("DOMContentLoaded", function() {
     registerServiceWorker();
     resetUIElements();
@@ -724,25 +662,11 @@ function activateTierUI(userTier) {
     document.querySelector('label[for="medium-quality"]').textContent = 'Medium';
     document.querySelector('label[for="high-quality"]').textContent = 'High';
 
-    document.getElementById('response-message').innerHTML = `${tierNames[userTier]} activated. <a class="wizard-link" href="https://billing.stripe.com/p/login/eVacPX8pKexG5tm8ww">Manage your subscription</a>.`;
-    document.getElementById('pro-cta').innerHTML = 'Pro content unlocked!';
 
     console.log('PRO-tier UI elements enabled.');
 
     // clear the usage limits error message
     clearErrorMessage('runjob-error');
-  }
-
-  // Find the logo image element and the container for the tier text
-  const logoImage = document.querySelector('#logo-display img');
-  const tierText = document.querySelector('#logo-display small');
-
-  // Update the logo source and tier text based on the userTier
-  if (logoImage && tierText) {
-      logoImage.src = tierLogos[userTier];
-      logoImage.alt = `freemusicdemixer-${tierNames[userTier].toLowerCase()}-logo`;
-      tierText.textContent = `${tierNames[userTier]} tier `;
-      tierText.appendChild(logoImage); // Ensure the image stays within the <small> tag
   }
 
   initAndResetWeeklyUsage();
@@ -873,10 +797,6 @@ function clearErrorMessage(elementId) {
     errorElem.style.display = 'none';
 }
 
-document.getElementById('activation-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-});
-
 nextStep2Btn.addEventListener('click', function(e) {
     clearErrorMessage('upload-error');
 
@@ -885,17 +805,6 @@ nextStep2Btn.addEventListener('click', function(e) {
 
     const remaining = MAX_FREE_JOBS - usageData.count;
     const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-
-    // 2) Check if free limit is reached
-    if (!loggedIn && remaining <= 0) {
-        showErrorMessage(
-        "You’ve reached your free limit. " +
-        "<a href='/pricing#subscribe-today' target='_blank'>Upgrade</a> or log in for unlimited!",
-        "runjob-error",
-        nextStep2Btn
-        );
-        return;
-    }
 
     clearErrorMessage('runjob-error');
 
